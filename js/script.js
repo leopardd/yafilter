@@ -554,9 +554,10 @@ var Filter = {
 self.onmessage = function(e) {
   var pixelPanels = JSON.parse(e.data.pixelPanels),
     func = e.data.func,
-    arg1 = e.data.arg1 || null,
     arg2 = e.data.arg2 || null,
-    filteredPixelPanels = Filter[func](pixelPanels, arg1, arg2);
+    arg3 = e.data.arg3 || null,
+    arg4 = e.data.arg4 || null,
+    filteredPixelPanels = Filter[func](pixelPanels, arg2, arg3, arg4);
     msg = {
       'pixelPanels' : JSON.stringify(filteredPixelPanels),
       'func'        : func

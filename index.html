@@ -46,21 +46,23 @@ var Box = function(selectorId) {
   };
 };
 
-var image,
-  imageName,
+var imageName,
+  imageName2,
+  imageData,
+  imageData2,
+  pixelPanels,
+  pixelPanels2,
   outputs = document.getElementById('outputs'),
-  canvas,
-  ctx;
+  canvas = document.createElement('canvas'),
+  ctx = canvas.getContext('2d');
 
-function getDataUri(url, callback) {
-  image = new Image();
+function getImageData(url, callback) {
+  var image = new Image();
 
   image.onload = function() {
     var imageData,
-      dataUri;
-
-    canvas = document.createElement('canvas');
-    ctx = canvas.getContext('2d');
+      canvas = document.createElement('canvas'),
+      ctx = canvas.getContext('2d');
     
     canvas.width = this.width;
     canvas.height = this.height;
@@ -83,13 +85,32 @@ function getDataUri(url, callback) {
   image.style.display = 'none';
 }
 
+function getPixelPanels(url, callback) {
+  getImageData(url, function(imageData) {
+    var pixelPanels = Convert.imageDataToPixelPanels(imageData);
+
+    callback(pixelPanels);
+  });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   console.log('Ready');
 
   imageName = 'image/running-shoes.png';
+  imageName2 = 'image/people.png';
 
-  getDataUri(imageName, function(imageData) {
-    var pixelPanels = Convert.imageDataToPixelPanels(imageData);
+  // TODO: fix callback (using Promise instead)
+  getPixelPanels(imageName, function(data) {
+    pixelPanels = data;
+
+    getPixelPanels(imageName2, function(data) {
+      pixelPanels2 = data;
+
+      startApp();
+    });
+  })
+
+  function startApp() {
     var imgProWorkerTasks = [
       {
         boxId: 'original',
@@ -132,22 +153,34 @@ document.addEventListener('DOMContentLoaded', function() {
         func: 'invert'
       },
       {
+        boxId: 'threshold-63',
+        title: 'Threshold 63',
+        func: 'threshold',
+        arg2: 63
+      },
+      {
         boxId: 'threshold-127',
         title: 'Threshold 127',
         func: 'threshold',
-        arg1: 127
+        arg2: 127
+      },
+      {
+        boxId: 'threshold-191',
+        title: 'Threshold 191',
+        func: 'threshold',
+        arg2: 191
       },
       {
         boxId: 'brightness-80',
         title: 'Brightness 80',
         func: 'brightness',
-        arg1: 80
+        arg2: 80
       },
       {
         boxId: 'darkness-80',
         title: 'Darkness 80',
         func: 'darkness',
-        arg1: 80
+        arg2: 80
       },
     ];
 
@@ -166,8 +199,9 @@ document.addEventListener('DOMContentLoaded', function() {
         msg = {
           'pixelPanels' : JSON.stringify(pixelPanels),
           'func'        : task.func,
-          'arg1'        : task.arg1 || null,
-          'arg2'        : task.arg2 || null
+          'arg2'        : task.arg2 || null,
+          'arg3'        : task.arg3 || null,
+          'arg4'        : task.arg4 || null,
         };
 
       box.updateStatus('Processing');
@@ -176,13 +210,16 @@ document.addEventListener('DOMContentLoaded', function() {
         var pixelPanels = JSON.parse(e.data.pixelPanels),
           imageData = Convert.pixelPanelsToImageData(pixelPanels);
 
+        canvas.width = imageData.width;
+        canvas.height = imageData.height;
+
         ctx.putImageData(imageData, 0, 0);
         box.updateImage(canvas.toDataURL('image/png'));
         box.updateStatus('Complete');
         box.addClass('done');
       };
     });
-  });
+  }
 });
 </script>
 </body>
