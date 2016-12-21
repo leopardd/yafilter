@@ -13,7 +13,7 @@ Yet another image filter
 ## TODO
 - [ ] Unit test
 - [ ] Fix testing script
-- [ ] Implement template engine
+- [x] Implement template engine
 - [ ] Optimize logic
 - [ ] Cannot handle large image size
 - [x] Refactor
@@ -53,4 +53,4 @@ perform processor-intensive calculations without blocking UI thread.
 
 ## Reference
 - [TinyJPG](https://tinyjpg.com/)
-- Photo by [Clem Onojeghuo](https://unsplash.com/photos/phIDtKzQN8k)
+- Photo by [Clem Onojeghuo](https://unsplash.com/photos/phIDtKzQN8k), [Samuel Zeller](https://unsplash.com/photos/CwkiN6_qpDI), [nobacks.com](http://nobacks.com/)

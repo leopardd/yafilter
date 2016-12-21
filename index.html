@@ -47,6 +47,7 @@ var Box = function(selectorId) {
 };
 
 var image,
+  imageName,
   outputs = document.getElementById('outputs'),
   canvas,
   ctx;
@@ -85,7 +86,9 @@ function getDataUri(url, callback) {
 document.addEventListener('DOMContentLoaded', function() {
   console.log('Ready');
 
-  getDataUri('image/people.png', function(imageData) {
+  imageName = 'image/running-shoes.png';
+
+  getDataUri(imageName, function(imageData) {
     var pixelPanels = Convert.imageDataToPixelPanels(imageData);
     var imgProWorkerTasks = [
       {
@@ -129,8 +132,8 @@ document.addEventListener('DOMContentLoaded', function() {
         func: 'invert'
       },
       {
-        boxId: 'threshold',
-        title: 'Threshold',
+        boxId: 'threshold-127',
+        title: 'Threshold 127',
         func: 'threshold',
         arg1: 127
       },

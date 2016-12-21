@@ -1,3 +1,7 @@
+body {
+  font-family: monospace;
+}
+
 .clearfix:after {
   visibility: hidden;
   display: block;
@@ -25,10 +29,11 @@
   overflow: hidden;
   height: 350px;
   background-color: #f5ffce;
+  box-sizing: border-box;
 }
 
 .box.done {
-  background-color: #fff;
+  background-color: #c6eaff;
 }
 
 .box:after {
@@ -38,6 +43,15 @@
   content: " ";
   clear: both;
   height: 0;
+}
+
+.box > img {
+  margin-bottom: 2px;
+}
+
+.box > .desc {
+  text-align: center;
+  margin: 0 auto;
 }
 
 /*# sourceMappingURL=style.css.map */
