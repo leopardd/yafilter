@@ -317,6 +317,34 @@ var Filter = {
   },
 
   /**
+   * Threshold
+   * TODO: optimize logic
+   * 
+   * @param  {PixelPanels} pixelPanels
+   * @param  {number} thresholdValue number between 0 - 255
+   * 
+   * @return {PixelPanels}
+   */
+  threshold: function(pixelPanels, thresholdValue) {
+    var width = pixelPanels.length,
+      height = pixelPanels[0].length,
+      result = new PixelPanels(width, height),
+      i = 0,
+      j = 0;
+
+    pixelPanels = this.grayscale(pixelPanels);
+
+    for (j = 0; j < height; j++) {
+      for (i = 0; i < width; i++ ) {
+        var value = (pixelPanels[i][j].red >= thresholdValue) ? 255 : 0;
+        result[i][j] = new Pixel(value, value, value, 255);
+      }
+    }
+
+    return result;
+  },
+
+  /**
    * Flip
    * TODO: optimize logic
    * 
@@ -473,7 +501,9 @@ var Filter = {
 self.onmessage = function(e) {
   var pixelPanels = JSON.parse(e.data.pixelPanels),
     func = e.data.func,
-    filteredPixelPanels = Filter[func](pixelPanels);
+    arg1 = e.data.arg1 || null,
+    arg2 = e.data.arg2 || null,
+    filteredPixelPanels = Filter[func](pixelPanels, arg1, arg2);
     msg = {
       'pixelPanels' : JSON.stringify(filteredPixelPanels),
       'func'        : func

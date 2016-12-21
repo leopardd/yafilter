@@ -128,7 +128,12 @@ document.addEventListener('DOMContentLoaded', function() {
         title: 'Invert',
         func: 'invert'
       },
-      }
+      {
+        boxId: 'threshold',
+        title: 'Threshold',
+        func: 'threshold',
+        arg1: 127
+      },
     ];
 
     // compile template
@@ -145,7 +150,9 @@ document.addEventListener('DOMContentLoaded', function() {
         box = new Box(task.boxId),
         msg = {
           'pixelPanels' : JSON.stringify(pixelPanels),
-          'func'        : task.func
+          'func'        : task.func,
+          'arg1'        : task.arg1 || null,
+          'arg2'        : task.arg2 || null
         };
 
       box.updateStatus('Processing');
