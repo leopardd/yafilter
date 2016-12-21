@@ -345,6 +345,59 @@ var Filter = {
   },
 
   /**
+   * Brightness
+   *
+   * @param  {PixelPanels} pixelPanels
+   * @param  {number} brightnessValue number between 0 - 255
+   * 
+   * @return {PixelPanels}
+   */
+  brightness: function(pixelPanels, brightnessValue) {
+    return this.add(pixelPanels, brightnessValue);
+  },
+
+  /**
+   * Darkness
+   * 
+   * @param  {PixelPanels} pixelPanels
+   * @param  {number} darknessValue number between 0 - 255
+   * 
+   * @return {PixelPanels}
+   */
+  darkness: function(pixelPanels, darknessValue) {
+    return this.add(pixelPanels, -darknessValue);
+  },
+
+  /**
+   * Add
+   * 
+   * @param  {PixelPanels} pixelPanels
+   * @param  {number} darknessValue number between 0 - 255
+   * 
+   * @return {PixelPanels}
+   */
+  add: function(pixelPanels, value) {
+    var width = pixelPanels.length,
+      height = pixelPanels[0].length,
+      result = new PixelPanels(width, height),
+      i = 0,
+      j = 0;
+
+    for (j = 0; j < height; j++) {
+      for (i = 0; i < width; i++ ) {
+        result[i][j] = new Pixel(
+          pixelPanels[i][j].red + value,
+          pixelPanels[i][j].green + value,
+          pixelPanels[i][j].blue + value,
+          pixelPanels[i][j].alpha
+        );
+      }
+    }
+
+    return result;
+  },
+
+  /**
    * Flip
    * TODO: optimize logic
    * 
