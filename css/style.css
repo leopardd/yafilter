@@ -1,0 +1,43 @@
+.clearfix:after {
+  visibility: hidden;
+  display: block;
+  font-size: 0;
+  content: " ";
+  clear: both;
+  height: 0;
+}
+
+* html .clearfix {
+  zoom: 1;
+}
+
+/* IE6 */
+*:first-child + html .clearfix {
+  zoom: 1;
+}
+
+/* IE7 */
+.box {
+  border: 1px solid #eee;
+  width: 49%;
+  float: left;
+  margin: 0;
+  overflow: hidden;
+  height: 350px;
+  background-color: #f5ffce;
+}
+
+.box.done {
+  background-color: #fff;
+}
+
+.box:after {
+  visibility: hidden;
+  display: block;
+  font-size: 0;
+  content: " ";
+  clear: both;
+  height: 0;
+}
+
+/*# sourceMappingURL=style.css.map */
