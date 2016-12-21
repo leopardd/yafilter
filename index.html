@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en-US" prefix="og: http://ogp.me/ns#">
 <head>
-<meta charset="UTF-8">
-<title>Image filter</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>YA filter</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/meyer-reset/2.0/reset.min.css">
 <link rel="stylesheet" href="css/style.css">
 </head>
@@ -10,7 +12,6 @@
 <div class="input" id="input">
 
 </div>
-
 <div class="outputs clearfix">
   <div id="original" class="box">
     <img src="">
@@ -76,6 +77,7 @@
     </div>
   </div>
 </div>
+<script src="js/script.js"></script>
 <script>
 var Box = function(selectorId) {
   this.id = selectorId;
@@ -116,6 +118,13 @@ function getDataUri(url, callback) {
 
     ctx.drawImage(this, 0, 0);
 
+    // imageData.data
+    // 
+    // [
+    //   r1, g1, b1, a1 (255),
+    //   r2, g2, b2, a2,
+    //   ...
+    // ]
     imageData = ctx.getImageData(0, 0, this.width, this.height);
 
     callback(imageData);
@@ -129,86 +138,63 @@ document.addEventListener('DOMContentLoaded', function() {
   console.log('Ready');
 
   getDataUri('image/people.png', function(imageData) {
+    var pixelPanels = Convert.imageDataToPixelPanels(imageData);
+    var imgProWorkerTasks = [
+      {
+        boxId: 'grayscale',
+        func: 'grayscale'
+      },
+      {
+        boxId: 'rotate',
+        func: 'rotate'
+      },
+      {
+        boxId: 'flip',
+        func: 'flip'
+      },
+      {
+        boxId: 'blur',
+        func: 'blur'
+      },
+      {
+        boxId: 'gaussian-blur',
+        func: 'gaussianBlur'
+      },
+      {
+        boxId: 'sharpen',
+        func: 'sharpen'
+      },
+      {
+        boxId: 'invert',
+        func: 'invert'
+      }
+    ];
 
-    // imageData.data
-    // 
-    // [
-    //   r1, g1, b1, a1 (255),
-    //   r2, g2, b2, a2,
-    //   ...
-    // ]
-    
+    // original
     ctx.putImageData(imageData, 0, 0);
     originalBox.updateImage(canvas.toDataURL('image/png'));
     originalBox.updateStatus('Complete');
     originalBox.addClass('done');
 
-    var imgProWorkerTasks = [
-      {
-        boxId: 'grayscale',
-        func: 'toGrayscale'
-      },
-      {
-        boxId: 'rotate',
-        func: 'toRotate'
-      },
-      {
-        boxId: 'flip',
-        func: 'toFlip'
-      },
-      {
-        boxId: 'blur',
-        func: 'toBlur'
-      },
-      {
-        boxId: 'gaussian-blur',
-        func: 'toGaussianBlur'
-      },
-      {
-        boxId: 'sharpen',
-        func: 'toSharpen'
-      },
-      {
-        boxId: 'invert',
-        func: 'toInvert'
-      }
-    ];
-
     imgProWorkerTasks.forEach(function(task) {
       var worker = new Worker('js/script.js'),
-        box = new Box(task.boxId);
+        box = new Box(task.boxId),
+        msg = {
+          'pixelPanels' : JSON.stringify(pixelPanels),
+          'func'        : task.func
+        };
 
       box.updateStatus('Processing');
-
+      worker.postMessage(msg);
       worker.onmessage = function(e) {
-        var imageData = JSON.parse(e.data.imageData),
-          func = e.data.func;
-
-        imageData = new ImageData(
-          (new Uint8ClampedArray(imageData.data)),
-          imageData.width,
-          imageData.height
-        );
+        var pixelPanels = JSON.parse(e.data.pixelPanels),
+          imageData = Convert.pixelPanelsToImageData(pixelPanels);
 
         ctx.putImageData(imageData, 0, 0);
         box.updateImage(canvas.toDataURL('image/png'));
         box.updateStatus('Complete');
         box.addClass('done');
       };
-
-      // prepare data for sending
-      var arrayedImageData = {};
-      // need to be array
-      arrayedImageData['data'] = Array.from(imageData.data);
-      arrayedImageData['width'] = imageData.width;
-      arrayedImageData['height'] = imageData.height;
-
-      var msg = {
-        'imageData' : JSON.stringify(arrayedImageData),
-        'boxId'     : task.boxId,
-        'func'      : task.func
-      };
-      worker.postMessage(msg);
     });
   });
 });
