@@ -1,0 +1,31 @@
+{
+  "name": "yafilter",
+  "description": "Yet another image filter",
+  "main": "",
+  "authors": [
+    "Nathachai Thongniran <inid3a@gmail.com>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "image",
+    "filter",
+    "image processing",
+    "worker",
+    "canvas"
+  ],
+  "moduleType": [
+    "node"
+  ],
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    
+  }
+}
