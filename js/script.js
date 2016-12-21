@@ -228,6 +228,10 @@ var Convert = {
 
 var Filter = {
 
+  original: function(pixelPanels) {
+    return pixelPanels;
+  },
+
   /**
    * Grayscale
    * 

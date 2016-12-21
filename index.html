@@ -12,71 +12,19 @@
 <div class="input" id="input">
 
 </div>
-<div class="outputs clearfix">
-  <div id="original" class="box">
-    <img src="">
-    <div class="desc">
-      <div class="title">Original</div>
-      <div class="status"></div>
-    </div>
-  </div>
+<div class="outputs clearfix" id="outputs">
 
-  <div id="grayscale" class="box">
-    <img src="">
-    <div class="desc">
-      <div class="title">Grayscale</div>
-      <div class="status"></div>
-    </div>
-  </div>
-
-  <div id="rotate" class="box">
-    <img src="">
-    <div class="desc">
-      <div class="title">Rotate</div>
-      <div class="status"></div>
-    </div>
-  </div>
-
-  <div id="flip" class="box">
-    <img src="">
-    <div class="desc">
-      <div class="title">Flip</div>
-      <div class="status"></div>
-    </div>
-  </div>
-
-  <div id="blur" class="box">
-    <img src="">
-    <div class="desc">
-      <div class="title">Blur</div>
-      <div class="status"></div>
-    </div>
-  </div>
-
-  <div id="gaussian-blur" class="box">
-    <img src="">
-    <div class="desc">
-      <div class="title">Gaussian blur</div>
-      <div class="status"></div>
-    </div>
-  </div>
-
-  <div id="sharpen" class="box">
-    <img src="">
-    <div class="desc">
-      <div class="title">Sharpen</div>
-      <div class="status"></div>
-    </div>
-  </div>  
-
-  <div id="invert" class="box">
-    <img src="">
-    <div class="desc">
-      <div class="title">Invert</div>
-      <div class="status"></div>
-    </div>
-  </div>
 </div>
+<script id="box-template" type="text/x-handlebars-template">
+  <div id="{{boxId}}" class="box">
+    <img src="">
+    <div class="desc">
+      <div class="title">{{title}}</div>
+      <div class="status"></div>
+    </div>
+  </div>
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.6/handlebars.min.js"></script>
 <script src="js/script.js"></script>
 <script>
 var Box = function(selectorId) {
@@ -99,7 +47,7 @@ var Box = function(selectorId) {
 };
 
 var image,
-  originalBox = new Box('original'),
+  outputs = document.getElementById('outputs'),
   canvas,
   ctx;
 
@@ -141,40 +89,56 @@ document.addEventListener('DOMContentLoaded', function() {
     var pixelPanels = Convert.imageDataToPixelPanels(imageData);
     var imgProWorkerTasks = [
       {
+        boxId: 'original',
+        title: 'Original',
+        func: 'original' 
+      },
+      {
         boxId: 'grayscale',
+        title: 'Grayscale',
         func: 'grayscale'
       },
       {
         boxId: 'rotate',
+        title: 'Rotate',
         func: 'rotate'
       },
       {
         boxId: 'flip',
+        title: 'Flip',
         func: 'flip'
       },
       {
         boxId: 'blur',
+        title: 'Blur',
         func: 'blur'
       },
       {
         boxId: 'gaussian-blur',
+        title: 'Gaussian blur',
         func: 'gaussianBlur'
       },
       {
         boxId: 'sharpen',
+        title: 'Sharpen',
         func: 'sharpen'
       },
       {
         boxId: 'invert',
+        title: 'Invert',
         func: 'invert'
+      },
       }
     ];
 
-    // original
-    ctx.putImageData(imageData, 0, 0);
-    originalBox.updateImage(canvas.toDataURL('image/png'));
-    originalBox.updateStatus('Complete');
-    originalBox.addClass('done');
+    // compile template
+    var boxTemplateSource = document.getElementById('box-template').innerHTML;
+    var boxTemplate = Handlebars.compile(boxTemplateSource);
+    var html = '';
+    imgProWorkerTasks.forEach(function(task) {
+      html += boxTemplate(task);
+    });
+    outputs.innerHTML = html;
 
     imgProWorkerTasks.forEach(function(task) {
       var worker = new Worker('js/script.js'),
