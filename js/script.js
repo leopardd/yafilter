@@ -337,7 +337,7 @@ var Filter = {
     for (j = 0; j < height; j++) {
       for (i = 0; i < width; i++ ) {
         var value = (pixelPanels[i][j].red >= thresholdValue) ? 255 : 0;
-        result[i][j] = new Pixel(value, value, value, 255);
+        result[i][j] = new Pixel(value, value, value, pixelPanels[i][j].alpha);
       }
     }
 
