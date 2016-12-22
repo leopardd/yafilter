@@ -5,19 +5,14 @@
  * Pixel
  * value of all parameters is between 0-255
  * 
- * @param  {number} [r=0]
- * @param  {number} [g=0]
- * @param  {number} [b=0]
- * @param  {number} [a=1]
+ * @param  {number} r
+ * @param  {number} g
+ * @param  {number} b
+ * @param  {number} a
  *
  * @return {Pixel}
  */
 var Pixel = function(r, g, b, a) {
-  if (typeof r === 'undefined') r = 0;
-  if (typeof g === 'undefined') g = 0;
-  if (typeof b === 'undefined') b = 0;
-  if (typeof a === 'undefined') a = 1;
-
   return {
     red: r,
     green: g,
@@ -126,22 +121,71 @@ var Factory = {
     return arr;
   },
 
-  zeroPixelPanels: function(width, height) {
-    zeroPixel = this.zeroPixel();
+  /**
+   * White pixel panels
+   * 
+   * @param  {number} width
+   * @param  {number} height
+   * 
+   * @return {PixelPanels}
+   */
+  whitePixelPanels: function(width, height) {
+    pixel = this.whitePixel();
 
-    return (new PixelPanels(width, height, zeroPixel));
+    return (new PixelPanels(width, height, pixel));
   },
 
+  /**
+   * Black pixel panels
+   * 
+   * @param  {number} width
+   * @param  {number} height
+   * 
+   * @return {PixelPanels}
+   */
+  blackPixelPanels: function(width, height) {
+    pixel = this.blackPixel();
+
+    return (new PixelPanels(width, height, pixel));
+  },
+
+  /**
+   * Transparent pixel panels
+   * 
+   * @param  {number} width
+   * @param  {number} height
+   * 
+   * @return {PixelPanels}
+   */
   transparentPixelPanels: function(width, height) {
     transparentPixel = this.transparentPixel();
 
     return (new PixelPanels(width, height, transparentPixel));
   },
 
-  zeroPixel: function() {
+  /**
+   * White pixel
+   * 
+   * @return {Pixel}
+   */
+  whitePixel: function() {
+    return (new Pixel(255, 255, 255, 1));
+  },
+
+  /**
+   * Black pixel
+   * 
+   * @return {Pixel}
+   */
+  blackPixel: function() {
     return (new Pixel(0, 0, 0, 1));
   },
 
+  /**
+   * Transparent pixel
+   * 
+   * @return {Pixel}
+   */
   transparentPixel: function() {
     return (new Pixel(0, 0, 0, 0));
   },
@@ -150,7 +194,7 @@ var Factory = {
 var Util = {
 
   /**
-   * Check null / undefined / empty string
+   * Check null / undefined
    *
    * @see http://stackoverflow.com/questions/5515310/is-there-a-standard-function-to-check-for-null-undefined-or-blank-variables-in
    * @see http://stackoverflow.com/questions/2559318/how-to-check-for-an-undefined-or-null-variable-in-javascript
@@ -158,10 +202,20 @@ var Util = {
    * @param  {*} a
    * @return {boolean}
    */
-  isNullOrUndefinedOrEmptyString: function(a) {
+  isNullOrUndefined: function(a) {
     var result = (a) ? true : false;
 
-    return result;
+    return (a == null);
+  },
+
+  /**
+   * Check empty string
+   * 
+   * @param  {string} str
+   * @return {boolean}
+   */
+  isEmptyString: function(str) {
+    return (str.trim() === '');
   },
 
   /**
@@ -176,6 +230,107 @@ var Util = {
    */
   clone: function(obj) {
     return JSON.parse(JSON.stringify(obj));
+  },
+
+  /*---------------------------------------------------------------- App
+   */
+
+  /**
+   * Check transparent pixel
+   * 
+   * @param  {Pixel} pixel
+   * 
+   * @return {boolean}
+   */
+  isTransparentPixel: function(pixel) {
+    return (pixel.alpha === 0);
+  },
+
+  /**
+   * Check pixel is exists or not
+   * unused
+   * 
+   * @param  {PixelPanels} pixelPanels
+   * @param  {number} i width index
+   * @param  {number} j height index
+   * 
+   * @return {boolean}
+   */
+  isPixelExists(pixelPanels, i, j) {
+    return ((typeof pixelPanels[i] === 'undefined') ||
+      (typeof pixelPanels[i][j] === 'undefined'));
+  },
+
+  /**
+   * Add pixel
+   * 
+   * @param  {Pixel} pixel1
+   * @param  {Pixel} pixel2
+   * 
+   * @reutnr 
+   */
+  addPixel: function(pixel, pixel2) {
+    red = Math.round(pixel.red + pixel2.red);
+    green = Math.round(pixel.green + pixel2.green);
+    blue = Math.round(pixel.blue + pixel2.blue),
+    alpha = Math.round(pixel.alpha + pixel2.alpha);
+
+    return (new Pixel(red, green, blue, alpha));
+  },
+
+  /**
+   * Average pixel
+   * 
+   * @param  {Pixel} pixel1
+   * @param  {Pixel} pixel2
+   * 
+   * @return {Pixel}
+   */
+  averagePixel: function(pixel, pixel2) {
+    red = Math.round((pixel.red + pixel2.red) / 2 );
+    green = Math.round((pixel.green + pixel2.green) / 2 );
+    blue = Math.round((pixel.blue + pixel2.blue) / 2 ),
+    alpha = Math.round((pixel.alpha + pixel2.alpha) / 2 );
+
+    return (new Pixel(red, green, blue, alpha));
+  },
+
+  /**
+   * Filter3x3Pixel
+   * used by "this.filter3x3" only
+   * TODO: optimize logic
+   * 
+   * @param  {PixelPanels} pixelPanels
+   * @param  {Array.Array.number[3]} filter
+   * @param  {number} i index of width
+   * @param  {number} j index of height
+   *
+   * @return {Pixel}
+   */
+  filter3x3Pixel: function(pixelPanels, filter, i, j) {
+    var k = 0, // width
+      l = 0, // height
+      red = 0,
+      green = 0,
+      blue = 0,
+      alpha = 0;
+
+    for (l = 0; l < 3; l++) {
+      for (k = 0; k < 3; k++) {
+        red   += filter[k][l] * pixelPanels[i + k - 1][j + l - 1].red;
+        green += filter[k][l] * pixelPanels[i + k - 1][j + l - 1].green;
+        blue  += filter[k][l] * pixelPanels[i + k - 1][j + l - 1].blue;
+        alpha += filter[k][l] * pixelPanels[i + k - 1][j + l - 1].alpha;
+      }
+    }
+
+    // clean
+    red = Math.round(red);
+    green = Math.round(green);
+    blue = Math.round(blue);
+    alpha = Math.round(alpha);
+
+    return (new Pixel(red, green, blue, alpha));
   },
 };
 
@@ -221,7 +376,7 @@ var Convert = {
   imageDataToPixelPanels: function(imageData) {
     var i = 0,
       j = 0,
-      pixelPanels = Factory.zeroPixelPanels(imageData.width, imageData.height);
+      pixelPanels = Factory.transparentPixelPanels(imageData.width, imageData.height);
 
     for (i = 0; i < imageData.width; i++) {
       for (j = 0; j < imageData.height; j++) {
@@ -285,7 +440,7 @@ var Filter = {
   grayscale: function(pixelPanels) {
     var width = pixelPanels.length,
       height = pixelPanels[0].length,
-      result = Factory.zeroPixelPanels(width, height),
+      result = Factory.transparentPixelPanels(width, height),
       i = 0,
       j = 0;
 
@@ -312,7 +467,7 @@ var Filter = {
   invert: function(pixelPanels) {
     var width = pixelPanels.length,
       height = pixelPanels[0].length,
-      result = Factory.zeroPixelPanels(width, height),
+      result = Factory.transparentPixelPanels(width, height),
       i = 0,
       j = 0;
 
@@ -341,7 +496,7 @@ var Filter = {
   rotate: function(pixelPanels) {
     var width = pixelPanels.length,
       height = pixelPanels[0].length,
-      result = Factory.zeroPixelPanels(width, height),
+      result = Factory.transparentPixelPanels(width, height),
       i = 0,
       j = 0;
 
@@ -369,7 +524,7 @@ var Filter = {
   threshold: function(pixelPanels, thresholdValue) {
     var width = pixelPanels.length,
       height = pixelPanels[0].length,
-      result = Factory.zeroPixelPanels(width, height),
+      result = Factory.transparentPixelPanels(width, height),
       i = 0,
       j = 0;
 
@@ -421,18 +576,15 @@ var Filter = {
   add: function(pixelPanels, value) {
     var width = pixelPanels.length,
       height = pixelPanels[0].length,
-      result = Factory.zeroPixelPanels(width, height),
+      result = Factory.transparentPixelPanels(width, height),
       i = 0,
       j = 0;
 
     for (j = 0; j < height; j++) {
       for (i = 0; i < width; i++ ) {
-        result[i][j] = new Pixel(
-          pixelPanels[i][j].red + value,
-          pixelPanels[i][j].green + value,
-          pixelPanels[i][j].blue + value,
-          pixelPanels[i][j].alpha
-        );
+        var tmp = new Pixel(value, value, value, pixelPanels[i][j].alpha);
+
+        result[i][j] = Util.addPixel(pixelPanels[i][j], tmp);
       }
     }
 
@@ -450,7 +602,7 @@ var Filter = {
   flip: function(pixelPanels) {
     var width = pixelPanels.length,
       height = pixelPanels[0].length,
-      result = Factory.zeroPixelPanels(width, height),
+      result = Factory.transparentPixelPanels(width, height),
       i = 0,
       j = 0;
 
@@ -467,43 +619,6 @@ var Filter = {
   },
 
   /**
-   * Filter3x3Pixel
-   * used by "this.filter3x3" only
-   * TODO: optimize logic
-   * 
-   * @param  {PixelPanels} pixelPanels
-   * @param  {Array.Array.number[3]} filter
-   * @param  {number} i index of width
-   * @param  {number} j index of height
-   *
-   * @return {Pixel}
-   */
-  filter3x3Pixel: function(pixelPanels, filter, i, j) {
-    var k = 0, // width
-      l = 0, // height
-      red = 0,
-      green = 0,
-      blue = 0,
-      alpha = 0;
-
-    for (l = 0; l < 3; l++) {
-      for (k = 0; k < 3; k++) {
-        red   += filter[k][l] * pixelPanels[i + k - 1][j + l - 1].red;
-        green += filter[k][l] * pixelPanels[i + k - 1][j + l - 1].green;
-        blue  += filter[k][l] * pixelPanels[i + k - 1][j + l - 1].blue;
-        alpha += filter[k][l] * pixelPanels[i + k - 1][j + l - 1].alpha;
-      }
-    }
-
-    return (new Pixel(
-      Math.round(red),
-      Math.round(green),
-      Math.round(blue),
-      Math.round(alpha)
-    ));
-  },
-
-  /**
    * Filter3x3
    * TODO: fix the top and left border
    * 
@@ -515,13 +630,13 @@ var Filter = {
   filter3x3: function(pixelPanels, filter) {
     var width = pixelPanels.length,
       height = pixelPanels[0].length,
-      result = Factory.zeroPixelPanels(width, height),
+      result = Factory.transparentPixelPanels(width, height),
       i = 0,
       j = 0;
 
     for (j = 1; j < height - 1; j++) {
       for (i = 1; i < width - 1; i++ ) {
-        result[i][j] = this.filter3x3Pixel(pixelPanels, filter, i, j);;
+        result[i][j] = Util.filter3x3Pixel(pixelPanels, filter, i, j);
       }
     }
 
