@@ -150,6 +150,15 @@ var Factory = {
   },
 
   /**
+   * Solid color pixel panels from hex code
+   */
+  colorPixelPanels: function(width, height, hexCode) {
+    pixel = Factory.colorPixel(hexCode);
+
+    return (new PixelPanels(width, height, pixel));
+  },
+
+  /**
    * Transparent pixel panels
    * 
    * @param  {number} width
@@ -179,6 +188,17 @@ var Factory = {
    */
   blackPixel: function() {
     return (new Pixel(0, 0, 0, 1));
+  },
+
+  /**
+   * Color pixel
+   * 
+   * @param  {string} hexCode
+   * 
+   * @return {Pixel}
+   */
+  colorPixel: function(hexCode) {
+    return Util.hexCodeToPixel(hexCode);
   },
 
   /**
@@ -230,6 +250,47 @@ var Util = {
    */
   clone: function(obj) {
     return JSON.parse(JSON.stringify(obj));
+  },
+
+  /**
+   * Convert hex code to Pixel
+   * 
+   * @see http://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
+   * 
+   * @example #0033ff
+   * @example #03f
+   * 
+   * @param  {string} hexCode
+   * 
+   * @return {Pixel}
+   */
+  hexCodeToPixel: function(hexCode) {
+    // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+    var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+    hexCode = hexCode.replace(shorthandRegex, function(m, r, g, b) {
+      return r + r + g + g + b + b;
+    });
+
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hexCode);
+    return result ? (new Pixel(
+      parseInt(result[1], 16),
+      parseInt(result[2], 16),
+      parseInt(result[3], 16),
+      255
+    )) : null;
+  },
+
+  /**
+   * Convert Pixel to hex code
+   * 
+   * @see http://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
+   * 
+   * @param  {Pixel} pixel
+   * 
+   * @return {string} hex code (e.g. #0033ff)
+   */
+  pixelToHexCode: function(pixel) {
+     return '#' + ((1 << 24) + (pixel.r << 16) + (pixel.g << 8) + pixel.b).toString(16).slice(1);
   },
 
   /*---------------------------------------------------------------- App
@@ -626,6 +687,45 @@ var Filter = {
 
     } else {
       console.log('resizeCanvas', errMsg);
+    }
+
+    return result;
+  },
+
+  /**
+   * Fill transparent pixel
+   * 
+   * @param  {PixelPanels} pixelPanels
+   * @param  {string} hexCode
+   * 
+   * @return {PixelPanels}
+   */
+  fill: function(pixelPanels, hexCode) {
+    console.log(hexCode);
+    return this.fillWithColor(pixelPanels, hexCode);
+  },
+
+  /**
+   * Fill transparent pixel with hex code (solid color)
+   * 
+   * @param  {PixelPanels} pixelPanels
+   * @param  {stirng} hexCode
+   * 
+   * @return {PixelPanels}
+   */
+  fillWithColor: function(pixelPanels, hexCode) {
+    var width = pixelPanels.length,
+      height = pixelPanels[0].length,
+      result = Factory.colorPixelPanels(width, height, hexCode),
+      i = 0,
+      j = 0;
+
+    for (j = 0; j < height; j++) {
+      for (i = 0; i < width; i++ ) {
+        if (!Util.isTransparentPixel(pixelPanels[i][j])) {
+          result[i][j] = pixelPanels[i][j];
+        }
+      }
     }
 
     return result;
