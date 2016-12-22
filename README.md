@@ -9,14 +9,17 @@ Yet another image filter
 
 ## Note
 - Code style: [Airbnb](https://github.com/airbnb/javascript)
+- Pixel operation (e.g. `add`, `average`) have to be processed in `Util` class
 
 ## TODO
 - [ ] Unit test
-- [ ] Fix testing script
+- [ ] Fix - Testing script
 - [x] Implement template engine
 - [ ] Optimize logic
 - [ ] Cannot handle large image size
 - [x] Refactor
+- [ ] Implement `Promise`
+- [ ] Fix - Cannot change result image dimension from original
 
 ## Stack: Javascript
 - Canvas
@@ -53,4 +56,6 @@ perform processor-intensive calculations without blocking UI thread.
 
 ## Reference
 - [TinyJPG](https://tinyjpg.com/)
-- Photo by [Clem Onojeghuo](https://unsplash.com/photos/phIDtKzQN8k), [Samuel Zeller](https://unsplash.com/photos/CwkiN6_qpDI), [nobacks.com](http://nobacks.com/)
+- Photo by [Clem Onojeghuo](https://unsplash.com/photos/phIDtKzQN8k), [Samuel Zeller](https://unsplash.com/photos/CwkiN6_qpDI), [nobacks.com](http://nobacks.com/), [cutoutlife.com](http://www.cutoutlife.com/), [mrcutout.com](http://www.mrcutout.com/), [skalgubbar.se](http://skalgubbar.se/)
+- JavaScript DocBlock standard, [usejsdoc.org](http://usejsdoc.org/tags-param.html), [devdocs.magento.com](http://devdocs.magento.com/guides/v2.0/coding-standards/docblock-standard-javascript.html)
+

@@ -30,6 +30,7 @@ body {
   height: 350px;
   background-color: #f5ffce;
   box-sizing: border-box;
+  position: relative;
 }
 
 .box.done {
@@ -45,13 +46,13 @@ body {
   height: 0;
 }
 
-.box > img {
-  margin-bottom: 2px;
-}
-
 .box > .desc {
   text-align: center;
   margin: 0 auto;
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  right: 0;
 }
 
 /*# sourceMappingURL=style.css.map */

@@ -97,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function() {
   console.log('Ready');
 
   imageName = 'image/running-shoes.png';
-  imageName2 = 'image/people.png';
+  imageName2 = 'image/baby.png';
 
   // TODO: fix callback (using Promise instead)
   getPixelPanels(imageName, function(data) {
@@ -136,6 +136,63 @@ document.addEventListener('DOMContentLoaded', function() {
         boxId: 'blur',
         title: 'Blur',
         func: 'blur'
+      },
+      {
+        boxId: 'combine',
+        title: 'Combine',
+        func: 'combine',
+        arg2: JSON.stringify(pixelPanels2),
+      },
+      {
+        boxId: 'over',
+        title: 'Over',
+        func: 'over',
+        arg2: JSON.stringify(pixelPanels2),
+      },
+      {
+        boxId: 'fill-ffb9f1',
+        title: 'Fill #ffb9f1',
+        func: 'fill',
+        arg2: JSON.stringify('#ffb9f1')
+      },
+      {
+        boxId: 'resize-200-100',
+        title: 'Resize w200 h100',
+        func: 'resize',
+        arg2: 200,
+        arg3: 100
+      },
+      {
+        boxId: 'crop-out-of-index',
+        title: 'Crop - Out of index',
+        func: 'crop',
+        arg2: 100,
+        arg3: 100,
+        arg4: 500,
+        arg5: 500
+      },
+      {
+        boxId: 'crop-100-100-50-100',
+        title: 'Crop 100 100 50 100',
+        func: 'crop',
+        arg2: 100,
+        arg3: 100,
+        arg4: 200,
+        arg5: 80
+      },
+      {
+        boxId: 'resize-canvas-unsupport-scale-down',
+        title: 'Resize canvas - Unsupport scale down',
+        func: 'resizeCanvas',
+        arg2: 100,
+        arg3: 100
+      },
+      {
+        boxId: 'resize-canvas',
+        title: 'Resize canvas',
+        func: 'resizeCanvas',
+        arg2: 500,
+        arg3: 400
       },
       {
         boxId: 'gaussian-blur',

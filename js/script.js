@@ -749,7 +749,6 @@ var Filter = {
    * @return {PixelPanels}
    */
   fill: function(pixelPanels, hexCode) {
-    console.log(hexCode);
     return this.fillWithColor(pixelPanels, hexCode);
   },
 
