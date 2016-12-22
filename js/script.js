@@ -542,6 +542,192 @@ var Filter = {
   },
 
   /**
+   * Crop
+   * 
+   * @param  {PixelPanels} pixelPanels
+   * @param  {number} startWidthIndex positive integer (0+)
+   * @param  {numver} startHeightIndex positive integer (0+)
+   * @param  {numver} desiredWidth positive integer (0+)
+   * @param  {numver} desiredHeight positive integer (0+)
+   * 
+   * @return {pixelPanels}
+   */
+  crop: function(pixelPanels, startWidthIndex, startHeightIndex, desiredWidth, desiredHeight) {
+    var width = pixelPanels.length,
+      height = pixelPanels[0].length,
+      result = Factory.transparentPixelPanels(desiredWidth, desiredHeight),
+      i = 0,
+      j = 0,
+      errMsg = '',
+      isValid = false;
+
+    // is out of index ?
+    if (startWidthIndex + desiredWidth > width - 1 ||
+      startHeightIndex + desiredHeight > height - 1) {
+      errMsg = 'Out of index';
+    }
+
+    isValid = Util.isEmptyString(errMsg) ? true : false;
+
+    if (isValid) {
+      for (j = 0; j < desiredHeight; j++) {
+        for (i = 0; i < desiredWidth; i++ ) {
+          var widthIndex = startWidthIndex + i,
+            heightIndex = startHeightIndex + j;
+
+          result[i][j] = pixelPanels[widthIndex][heightIndex];
+        }
+      }
+
+    } else {
+      console.log('crop', errMsg);
+    }
+
+    return result;
+  },
+  
+  /**
+   * Resize canvas
+   * scale up to right and bottom
+   * TODO: support scale down
+   * TODO: support scale up direction
+   * TODO: optimize logic
+   * 
+   * @param  {PixelPanels} pixelPanels
+   * @param  {number} desiredWidth
+   * @param  {number} desiredHeight
+   * 
+   * @return {PixelPanels}
+   */
+  resizeCanvas: function(pixelPanels, desiredWidth, desiredHeight) {
+    var width = pixelPanels.length,
+      height = pixelPanels[0].length,
+      result = Factory.transparentPixelPanels(desiredWidth, desiredHeight),
+      i = 0,
+      j = 0,
+      errMsg = '',
+      isValid = false;
+
+    // is scale down
+    if (desiredWidth < width ||
+      desiredHeight < height) {
+      errMsg = 'Not support scale down';
+    }
+
+    isValid = Util.isEmptyString(errMsg) ? true : false;
+
+    if (isValid) {
+      // copy original to result
+      for (j = 0; j < height; j++) {
+        for (i = 0; i < width; i++) {
+          result[i][j] = pixelPanels[i][j];
+        }
+      }
+
+    } else {
+      console.log('resizeCanvas', errMsg);
+    }
+
+    return result;
+  },
+
+  /**
+   * Combine
+   * TODO: optimize logic
+   * 
+   * @param  {PixelPanels} pixelPanels
+   * @param  {PixelPanels} pixelPanels2
+   * 
+   * @return {PixelPanels}
+   */
+  combine: function(pixelPanels, pixelPanels2) {
+    var pixelPanelsWidth = pixelPanels.length,
+      pixelPanelsHeight = pixelPanels[0].length,
+      pixelPanels2Width = pixelPanels2.length,
+      pixelPanels2Height = pixelPanels2[0].length,
+      width = (pixelPanelsWidth > pixelPanels2Width) ? pixelPanelsWidth : pixelPanels2Width,
+      height = (pixelPanelsHeight > pixelPanels2Height) ? pixelPanelsHeight : pixelPanels2Height,
+      result = Factory.transparentPixelPanels(width, height),
+      i = 0,
+      j = 0;
+    
+    pixelPanels = this.resizeCanvas(pixelPanels, width, height);
+    pixelPanels2 = this.resizeCanvas(pixelPanels2, width, height);
+
+    for (j = 0; j < height; j++) {
+      for (i = 0; i < width; i++ ) {
+        result[i][j] = Util.addPixel(pixelPanels[i][j], pixelPanels2[i][j]);
+      }
+    }
+
+    return result;
+  },
+
+  /**
+   * Over
+   * based from "combine"
+   * TODO: optimize logic
+   * 
+   * "obj" over "bg"
+   * "pixelPanels2" over "pixelPanels"
+   * 
+   * @param  {PixelPanels} pixelPanels
+   * @param  {PixelPanels} pixelPanels2
+   * 
+   * @return {PixelPanels}
+   */
+  over: function(pixelPanels, pixelPanels2) {
+    var pixelPanelsWidth = pixelPanels.length,
+      pixelPanelsHeight = pixelPanels[0].length,
+      pixelPanels2Width = pixelPanels2.length,
+      pixelPanels2Height = pixelPanels2[0].length,
+      width = (pixelPanelsWidth > pixelPanels2Width) ? pixelPanelsWidth : pixelPanels2Width,
+      height = (pixelPanelsHeight > pixelPanels2Height) ? pixelPanelsHeight : pixelPanels2Height,
+      result = Factory.transparentPixelPanels(width, height),
+      i = 0,
+      j = 0;
+
+    // TODO: update naming
+    var bg = this.resizeCanvas(pixelPanels, width, height),
+      obj = this.resizeCanvas(pixelPanels2, width, height);
+
+    for (j = 0; j < height; j++) {
+      for (i = 0; i < width; i++ ) {
+        var pixel;
+
+        // 4 case
+        // No. | bg tran. | obj tran.
+        // 1   | x        | x
+        // 2   | x        |
+        // 3   |          | x
+        // 4   |          |
+
+        if (Util.isTransparentPixel(bg[i][j]) &&
+          Util.isTransparentPixel(obj[i][j])) {
+          // case 1
+          // nothing
+
+        } else if (Util.isTransparentPixel(bg[i][j]) &&
+          !Util.isTransparentPixel(obj[i][j])) {
+          // case 2
+          result[i][j] = obj[i][j];
+
+        } else if (!Util.isTransparentPixel(bg[i][j]) &&
+          Util.isTransparentPixel(obj[i][j])) {
+          // case 3
+          result[i][j] = bg[i][j];
+
+        } else {
+          // case 4
+          result[i][j] = obj[i][j];
+        }
+      }
+    }
+
+    return result;
+  },
+
+  /**
    * Brightness
    *
    * @param  {PixelPanels} pixelPanels
