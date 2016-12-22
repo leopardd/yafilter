@@ -5,10 +5,10 @@
  * Pixel
  * value of all parameters is between 0-255
  * 
- * @param {number} [r=0]
- * @param {number} [g=0]
- * @param {number} [b=0]
- * @param {number} [a=1]
+ * @param  {number} [r=0]
+ * @param  {number} [g=0]
+ * @param  {number} [b=0]
+ * @param  {number} [a=1]
  *
  * @return {Pixel}
  */
@@ -43,9 +43,9 @@ var Pixel = function(r, g, b, a) {
  *   height: number
  * }
  * 
- * @param {Uint8ClampedArray} data
- * @param {number} width
- * @param {number} height
+ * @param  {Uint8ClampedArray} data
+ * @param  {number} width
+ * @param  {number} height
  *
  * @return {ImageDataArray}
  */
@@ -60,16 +60,21 @@ var ImageDataArray = function(data, width, height) {
 /**
  * PixelPanels
  * 
+ * @param  {number} width
+ * @param  {number} height
+ * @param  {Pixel} defaultPixel
+ * 
  * @return {Array.Array.Pixel}
  */
-var PixelPanels = function(width, height) {
-  return Util.create2DArrayWithDefault(width, height, new Pixel());
+var PixelPanels = function(width, height, defaultPixel) {
+  return Factory.TwoDArrayWithDefault(width, height, defaultPixel);
 };
 
 /*================================================================ Static
  */
 
-var Util = {
+// used for create something common (e.g. Model)
+var Factory = {
 
   /**
    * Creature 2D array
@@ -80,7 +85,7 @@ var Util = {
    * 
    * @return {Array.Array}
    */
-  create2DArray: function(length) {
+  TwoDArray: function(length) {
     var arr = new Array(length || 0),
     i = length;
 
@@ -88,7 +93,7 @@ var Util = {
       var args = Array.prototype.slice.call(arguments, 1);
 
       while(i--) {
-        arr[length-1 - i] = this.create2DArray.apply(this, args);
+        arr[length-1 - i] = this.TwoDArray.apply(this, args);
       }
     }
 
@@ -104,7 +109,7 @@ var Util = {
    * 
    * @return {Array.Array}
    */
-  create2DArrayWithDefault: function(rows, cols, defaultValue) {
+  TwoDArrayWithDefault: function(rows, cols, defaultValue) {
     var arr = [],
       i = 0,
       j = 0;
@@ -119,6 +124,44 @@ var Util = {
     }
 
     return arr;
+  },
+
+  zeroPixelPanels: function(width, height) {
+    zeroPixel = this.zeroPixel();
+
+    return (new PixelPanels(width, height, zeroPixel));
+  },
+
+  transparentPixelPanels: function(width, height) {
+    transparentPixel = this.transparentPixel();
+
+    return (new PixelPanels(width, height, transparentPixel));
+  },
+
+  zeroPixel: function() {
+    return (new Pixel(0, 0, 0, 1));
+  },
+
+  transparentPixel: function() {
+    return (new Pixel(0, 0, 0, 0));
+  },
+};
+
+var Util = {
+
+  /**
+   * Check null / undefined / empty string
+   *
+   * @see http://stackoverflow.com/questions/5515310/is-there-a-standard-function-to-check-for-null-undefined-or-blank-variables-in
+   * @see http://stackoverflow.com/questions/2559318/how-to-check-for-an-undefined-or-null-variable-in-javascript
+   * 
+   * @param  {*} a
+   * @return {boolean}
+   */
+  isNullOrUndefinedOrEmptyString: function(a) {
+    var result = (a) ? true : false;
+
+    return result;
   },
 
   /**
@@ -178,7 +221,7 @@ var Convert = {
   imageDataToPixelPanels: function(imageData) {
     var i = 0,
       j = 0,
-      pixelPanels = new PixelPanels(imageData.width, imageData.height);
+      pixelPanels = Factory.zeroPixelPanels(imageData.width, imageData.height);
 
     for (i = 0; i < imageData.width; i++) {
       for (j = 0; j < imageData.height; j++) {
@@ -242,7 +285,7 @@ var Filter = {
   grayscale: function(pixelPanels) {
     var width = pixelPanels.length,
       height = pixelPanels[0].length,
-      result = new PixelPanels(width, height),
+      result = Factory.zeroPixelPanels(width, height),
       i = 0,
       j = 0;
 
@@ -269,7 +312,7 @@ var Filter = {
   invert: function(pixelPanels) {
     var width = pixelPanels.length,
       height = pixelPanels[0].length,
-      result = new PixelPanels(width, height),
+      result = Factory.zeroPixelPanels(width, height),
       i = 0,
       j = 0;
 
@@ -298,18 +341,16 @@ var Filter = {
   rotate: function(pixelPanels) {
     var width = pixelPanels.length,
       height = pixelPanels[0].length,
-      result = new PixelPanels(width, height),
+      result = Factory.zeroPixelPanels(width, height),
       i = 0,
       j = 0;
 
     for (j = 0; j < height; j++) {
       for (i = 0; i < width; i++ ) {
-        result[i][j] = new Pixel(
-          pixelPanels[width - i - 1][height - j - 1].red,
-          pixelPanels[width - i - 1][height - j - 1].green,
-          pixelPanels[width - i - 1][height - j - 1].blue,
-          pixelPanels[width - i - 1][height - j - 1].alpha
-        );
+        var widthIndex =  width - i - 1,
+          heightIndex = height - j - 1;
+
+        result[i][j] = pixelPanels[widthIndex][heightIndex];
       }
     }
 
@@ -328,7 +369,7 @@ var Filter = {
   threshold: function(pixelPanels, thresholdValue) {
     var width = pixelPanels.length,
       height = pixelPanels[0].length,
-      result = new PixelPanels(width, height),
+      result = Factory.zeroPixelPanels(width, height),
       i = 0,
       j = 0;
 
@@ -337,6 +378,7 @@ var Filter = {
     for (j = 0; j < height; j++) {
       for (i = 0; i < width; i++ ) {
         var value = (pixelPanels[i][j].red >= thresholdValue) ? 255 : 0;
+
         result[i][j] = new Pixel(value, value, value, pixelPanels[i][j].alpha);
       }
     }
@@ -379,7 +421,7 @@ var Filter = {
   add: function(pixelPanels, value) {
     var width = pixelPanels.length,
       height = pixelPanels[0].length,
-      result = new PixelPanels(width, height),
+      result = Factory.zeroPixelPanels(width, height),
       i = 0,
       j = 0;
 
@@ -408,18 +450,16 @@ var Filter = {
   flip: function(pixelPanels) {
     var width = pixelPanels.length,
       height = pixelPanels[0].length,
-      result = new PixelPanels(width, height),
+      result = Factory.zeroPixelPanels(width, height),
       i = 0,
       j = 0;
 
     for (j = 0; j < height; j++) {
       for (i = 0; i < width; i++ ) {
-        result[i][j] = new Pixel(
-          pixelPanels[width - i - 1][j].red,
-          pixelPanels[width - i - 1][j].green,
-          pixelPanels[width - i - 1][j].blue,
-          pixelPanels[width - i - 1][j].alpha
-        );
+        var widthIndex = width - i - 1,
+          heightIndex = j;
+
+        result[i][j] = pixelPanels[widthIndex][heightIndex];
       }
     }
 
@@ -431,10 +471,10 @@ var Filter = {
    * used by "this.filter3x3" only
    * TODO: optimize logic
    * 
-   * @param {PixelPanels} pixelPanels
-   * @param {Array.Array.number[3]} filter
-   * @param {number} i index of width
-   * @param {number} j index of height
+   * @param  {PixelPanels} pixelPanels
+   * @param  {Array.Array.number[3]} filter
+   * @param  {number} i index of width
+   * @param  {number} j index of height
    *
    * @return {Pixel}
    */
@@ -475,7 +515,7 @@ var Filter = {
   filter3x3: function(pixelPanels, filter) {
     var width = pixelPanels.length,
       height = pixelPanels[0].length,
-      result = new PixelPanels(width, height),
+      result = Factory.zeroPixelPanels(width, height),
       i = 0,
       j = 0;
 
@@ -554,10 +594,11 @@ var Filter = {
 self.onmessage = function(e) {
   var pixelPanels = JSON.parse(e.data.pixelPanels),
     func = e.data.func,
-    arg2 = e.data.arg2 || null,
-    arg3 = e.data.arg3 || null,
-    arg4 = e.data.arg4 || null,
-    filteredPixelPanels = Filter[func](pixelPanels, arg2, arg3, arg4);
+    arg2 = JSON.parse(e.data.arg2) || null,
+    arg3 = JSON.parse(e.data.arg3) || null,
+    arg4 = JSON.parse(e.data.arg4) || null,
+    arg5 = JSON.parse(e.data.arg5) || null,
+    filteredPixelPanels = Filter[func](pixelPanels, arg2, arg3, arg4, arg5);
     msg = {
       'pixelPanels' : JSON.stringify(filteredPixelPanels),
       'func'        : func
