@@ -648,6 +648,54 @@ var Filter = {
   },
   
   /**
+   * Resize
+   * resizeImage by default
+   * 
+   * @param  {PixelPanels} pixelPanels
+   * @param  {number} desiredWidth
+   * @param  {number} desiredHeight
+   * 
+   * @return {PixelPanels}
+   */
+  resize: function(pixelPanels, desiredWidth, desiredHeight) {
+    return this.resizeImage(pixelPanels, desiredWidth, desiredHeight);
+  },
+
+  /**
+   * Resize image
+   * alternative http://stackoverflow.com/questions/19262141/resize-image-with-javascript-canvas-smoothly
+   * 
+   * @see http://stackoverflow.com/questions/8244936/java-i-need-a-very-fast-image-scaling-algorithm
+   * 
+   * @param  {PixelPanels} pixelPanels
+   * @param  {number} desiredWidth
+   * @param  {number} desiredHeight
+   * 
+   * @return {PixelPanels}
+   */
+  resizeImage: function(pixelPanels, desiredWidth, desiredHeight) {
+    var width = pixelPanels.length,
+      height = pixelPanels[0].length,
+      result = Factory.transparentPixelPanels(desiredWidth, desiredHeight),
+      i = 0,
+      j = 0;
+    
+    var widthRatio = width / desiredWidth,
+      heightRatio = height / desiredHeight;
+    
+    for (j = 0; j < desiredHeight; j++) {
+      for (i = 0; i < desiredWidth; i++) {
+        var px = Math.floor(i * widthRatio),
+          py = Math.floor(j * heightRatio);
+
+        result[i][j] = pixelPanels[px][py];
+      }
+    }
+
+    return result;
+  },
+
+  /**
    * Resize canvas
    * scale up to right and bottom
    * TODO: support scale down
