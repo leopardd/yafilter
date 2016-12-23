@@ -56,6 +56,15 @@ var imageName,
   canvas = document.createElement('canvas'),
   ctx = canvas.getContext('2d');
 
+/**
+ * Get ImageData
+ * 
+ * @see https://davidwalsh.name/convert-image-data-uri-javascript
+ * @see http://stackoverflow.com/questions/934012/get-image-data-in-javascript
+ *
+ * @param {string}   url
+ * @param {Function} callback callback function
+ */
 function getImageData(url, callback) {
   var image = new Image();
 
