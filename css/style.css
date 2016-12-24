@@ -37,6 +37,10 @@ body {
   background-color: #c6eaff;
 }
 
+.box.error, .box.unsupported {
+  background-color: #ff7979;
+}
+
 .box:after {
   visibility: hidden;
   display: block;

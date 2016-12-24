@@ -123,58 +123,200 @@ document.addEventListener('DOMContentLoaded', function() {
     var imgProWorkerTasks = [
       {
         boxId: 'original',
-        title: 'Original',
+        title: 'original',
         func: 'original' 
       },
       {
         boxId: 'grayscale',
-        title: 'Grayscale',
+        title: 'grayscale',
         func: 'grayscale'
       },
       {
         boxId: 'rotate',
-        title: 'Rotate',
+        title: 'rotate',
         func: 'rotate'
       },
       {
         boxId: 'flip',
-        title: 'Flip',
+        title: 'flip',
         func: 'flip'
       },
       {
         boxId: 'blur',
-        title: 'Blur',
+        title: 'blur',
         func: 'blur'
       },
       {
+        boxId: 'gaussian-blur',
+        title: 'gaussianBlur',
+        func: 'gaussianBlur'
+      },
+      {
         boxId: 'combine',
-        title: 'Combine',
+        title: 'combine (left, top)',
         func: 'combine',
-        arg2: JSON.stringify(pixelPanels2),
+        arg2: pixelPanels2,
+      },
+      {
+        boxId: 'combine-left-center',
+        title: 'combine (left, center)',
+        func: 'combine',
+        arg2: pixelPanels2,
+        arg3: 'left',
+        arg4: 'center'
+      },
+      {
+        boxId: 'combine-left-bottom',
+        title: 'combine (left, bottom)',
+        func: 'combine',
+        arg2: pixelPanels2,
+        arg3: 'left',
+        arg4: 'bottom'
+      },
+      {
+        boxId: 'combine-center-top',
+        title: 'combine (center, top)',
+        func: 'combine',
+        arg2: pixelPanels2,
+        arg3: 'center',
+        arg4: 'top'
+      },
+      {
+        boxId: 'combine-center-center',
+        title: 'combine (center, center)',
+        func: 'combine',
+        arg2: pixelPanels2,
+        arg3: 'center',
+        arg4: 'center'
+      },
+      {
+        boxId: 'combine-center-bottom',
+        title: 'combine (center, bottom)',
+        func: 'combine',
+        arg2: pixelPanels2,
+        arg3: 'center',
+        arg4: 'bottom'
+      },
+      {
+        boxId: 'combine-right-top',
+        title: 'combine (right, top)',
+        func: 'combine',
+        arg2: pixelPanels2,
+        arg3: 'right',
+        arg4: 'top'
+      },
+      {
+        boxId: 'combine-right-center',
+        title: 'combine (right, center)',
+        func: 'combine',
+        arg2: pixelPanels2,
+        arg3: 'right',
+        arg4: 'center'
+      },
+      {
+        boxId: 'combine-right-bottom',
+        title: 'combine (right, bottom)',
+        func: 'combine',
+        arg2: pixelPanels2,
+        arg3: 'right',
+        arg4: 'bottom'
       },
       {
         boxId: 'over',
-        title: 'Over',
+        title: 'over (left, top)',
         func: 'over',
-        arg2: JSON.stringify(pixelPanels2),
+        arg2: pixelPanels2,
+      },
+      {
+        boxId: 'over-left-center',
+        title: 'over (left, center)',
+        func: 'over',
+        arg2: pixelPanels2,
+        arg3: 'left',
+        arg4: 'center'
+      },
+      {
+        boxId: 'over-left-bottom',
+        title: 'over (left, bottom)',
+        func: 'over',
+        arg2: pixelPanels2,
+        arg3: 'left',
+        arg4: 'bottom'
+      },
+      {
+        boxId: 'over-center-top',
+        title: 'over (center, top)',
+        func: 'over',
+        arg2: pixelPanels2,
+        arg3: 'center',
+        arg4: 'top'
+      },
+      {
+        boxId: 'over-center-center',
+        title: 'over (center, center)',
+        func: 'over',
+        arg2: pixelPanels2,
+        arg3: 'center',
+        arg4: 'center'
+      },
+      {
+        boxId: 'over-center-bottom',
+        title: 'over (center, bottom)',
+        func: 'over',
+        arg2: pixelPanels2,
+        arg3: 'center',
+        arg4: 'bottom'
+      },
+      {
+        boxId: 'over-right-top',
+        title: 'over (right, top)',
+        func: 'over',
+        arg2: pixelPanels2,
+        arg3: 'right',
+        arg4: 'top'
+      },
+      {
+        boxId: 'over-right-center',
+        title: 'over (right, center)',
+        func: 'over',
+        arg2: pixelPanels2,
+        arg3: 'right',
+        arg4: 'center'
+      },
+      {
+        boxId: 'over-right-bottom',
+        title: 'over (right, bottom)',
+        func: 'over',
+        arg2: pixelPanels2,
+        arg3: 'right',
+        arg4: 'bottom'
       },
       {
         boxId: 'fill-ffb9f1',
-        title: 'Fill #ffb9f1',
+        title: 'fill #ffb9f1',
         func: 'fill',
-        arg2: JSON.stringify('#ffb9f1')
+        arg2: '#ffb9f1'
       },
       {
         boxId: 'resize-200-100',
-        title: 'Resize w200 h100',
+        title: 'resize w200 h100 (smaller)',
         func: 'resize',
         arg2: 200,
         arg3: 100
       },
       {
+        boxId: 'resize-500-600',
+        title: 'resize w500 h600 (bigger)',
+        func: 'resize',
+        arg2: 500,
+        arg3: 600
+      },
+      {
         boxId: 'crop-out-of-index',
-        title: 'Crop - Out of index',
+        title: 'crop - Out of index',
         func: 'crop',
+        customClass: 'error',
+        customMessage: 'Out of index',
         arg2: 100,
         arg3: 100,
         arg4: 500,
@@ -182,7 +324,7 @@ document.addEventListener('DOMContentLoaded', function() {
       },
       {
         boxId: 'crop-100-100-50-100',
-        title: 'Crop 100 100 50 100',
+        title: 'crop 100 100 50 100',
         func: 'crop',
         arg2: 100,
         arg3: 100,
@@ -191,60 +333,129 @@ document.addEventListener('DOMContentLoaded', function() {
       },
       {
         boxId: 'resize-canvas-unsupport-scale-down',
-        title: 'Resize canvas - Unsupport scale down',
+        title: 'resizeCanvas - Unsupport scale down',
         func: 'resizeCanvas',
+        customClass: 'error',
+        customMessage: 'Unsupport scale down',
         arg2: 100,
         arg3: 100
       },
       {
         boxId: 'resize-canvas',
-        title: 'Resize canvas',
+        title: 'resizeCanvas (left, top)',
         func: 'resizeCanvas',
         arg2: 500,
         arg3: 400
       },
       {
-        boxId: 'gaussian-blur',
-        title: 'Gaussian blur',
-        func: 'gaussianBlur'
+        boxId: 'resize-canvas-left-center',
+        title: 'resizeCanvas (left, center)',
+        func: 'resizeCanvas',
+        arg2: 500,
+        arg3: 400,
+        arg4: 'left',
+        arg5: 'center'
+      },
+      {
+        boxId: 'resize-canvas-left-bottom',
+        title: 'resizeCanvas (left, bottom)',
+        func: 'resizeCanvas',
+        arg2: 500,
+        arg3: 400,
+        arg4: 'left',
+        arg5: 'bottom'
+      },
+      {
+        boxId: 'resize-canvas-center-top',
+        title: 'resizeCanvas (center, top)',
+        func: 'resizeCanvas',
+        arg2: 500,
+        arg3: 400,
+        arg4: 'center',
+        arg5: 'top'
+      },
+      {
+        boxId: 'resize-canvas-center-center',
+        title: 'resizeCanvas (center, center)',
+        func: 'resizeCanvas',
+        arg2: 500,
+        arg3: 400,
+        arg4: 'center',
+        arg5: 'center'
+      },
+      {
+        boxId: 'resize-canvas-center-bottom',
+        title: 'resizeCanvas (center, bottom)',
+        func: 'resizeCanvas',
+        arg2: 500,
+        arg3: 400,
+        arg4: 'center',
+        arg5: 'bottom'
+      },
+      {
+        boxId: 'resize-canvas-right-top',
+        title: 'resizeCanvas (right, top)',
+        func: 'resizeCanvas',
+        arg2: 500,
+        arg3: 400,
+        arg4: 'right',
+        arg5: 'top'
+      },
+      {
+        boxId: 'resize-canvas-right-center',
+        title: 'resizeCanvas (right, center)',
+        func: 'resizeCanvas',
+        arg2: 500,
+        arg3: 400,
+        arg4: 'right',
+        arg5: 'center'
+      },
+      {
+        boxId: 'resize-canvas-right-bottom',
+        title: 'resizeCanvas (right, bottom)',
+        func: 'resizeCanvas',
+        arg2: 500,
+        arg3: 400,
+        arg4: 'right',
+        arg5: 'bottom'
       },
       {
         boxId: 'sharpen',
-        title: 'Sharpen',
+        title: 'sharpen',
         func: 'sharpen'
       },
       {
         boxId: 'invert',
-        title: 'Invert',
+        title: 'invert',
         func: 'invert'
       },
       {
         boxId: 'threshold-63',
-        title: 'Threshold 63',
+        title: 'threshold 63',
         func: 'threshold',
         arg2: 63
       },
       {
         boxId: 'threshold-127',
-        title: 'Threshold 127',
+        title: 'threshold 127',
         func: 'threshold',
         arg2: 127
       },
       {
         boxId: 'threshold-191',
-        title: 'Threshold 191',
+        title: 'threshold 191',
         func: 'threshold',
         arg2: 191
       },
       {
         boxId: 'brightness-80',
-        title: 'Brightness 80',
+        title: 'brightness 80',
         func: 'brightness',
         arg2: 80
       },
       {
         boxId: 'darkness-80',
-        title: 'Darkness 80',
+        title: 'darkness 80',
         func: 'darkness',
         arg2: 80
       },
@@ -262,13 +473,19 @@ document.addEventListener('DOMContentLoaded', function() {
     imgProWorkerTasks.forEach(function(task) {
       var worker = new Worker('js/script.js'),
         box = new Box(task.boxId),
+        customClass = task.customClass || null,
+        customMessage = task.customMessage || null,
+        arg2 = task.arg2 || null,
+        arg3 = task.arg3 || null,
+        arg4 = task.arg4 || null,
+        arg5 = task.arg5 || null,
         msg = {
           'pixelPanels' : JSON.stringify(pixelPanels),
           'func'        : task.func,
-          'arg2'        : task.arg2 || null,
-          'arg3'        : task.arg3 || null,
-          'arg4'        : task.arg4 || null,
-          'arg5'        : task.arg5 || null,
+          'arg2'        : JSON.stringify(arg2),
+          'arg3'        : JSON.stringify(arg3),
+          'arg4'        : JSON.stringify(arg4),
+          'arg5'        : JSON.stringify(arg5),
         };
 
       box.updateStatus('Processing');
@@ -282,8 +499,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
         ctx.putImageData(imageData, 0, 0);
         box.updateImage(canvas.toDataURL('image/png'));
-        box.updateStatus('Complete');
-        box.addClass('done');
+
+        if (customClass) {
+          box.updateStatus(customMessage);
+          box.addClass(customClass);
+
+        } else {
+          box.updateStatus('Complete');
+          box.addClass('done');
+        }
       };
     });
   }

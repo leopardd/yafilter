@@ -28,6 +28,11 @@ body {
     background-color: #c6eaff;
   }
 
+  &.error,
+  &.unsupported {
+    background-color: #ff7979;
+  }
+
   &:after {
     visibility: hidden;
     display: block;
