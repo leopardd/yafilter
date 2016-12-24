@@ -705,13 +705,19 @@ var Filter = {
    * @param  {PixelPanels} pixelPanels
    * @param  {number} desiredWidth
    * @param  {number} desiredHeight
+   * @param  {string} horizontalPosition position left or center or right (default: left)
+   * @param  {string} verticalPosition position top or center or bottom (default: top)
    * 
    * @return {PixelPanels}
    */
-  resizeCanvas: function(pixelPanels, desiredWidth, desiredHeight) {
+  resizeCanvas: function(pixelPanels, desiredWidth, desiredHeight, horizontalPosition, verticalPosition) {
+    if (typeof horizontalPosition === 'undefined') horizontalPosition = 'left';
+    if (typeof verticalPosition === 'undefined') verticalPosition = 'top';
     var width = pixelPanels.length,
       height = pixelPanels[0].length,
       result = Factory.transparentPixelPanels(desiredWidth, desiredHeight),
+      startWidthIndex = 0,
+      startHeightIndex = 0,
       i = 0,
       j = 0,
       errMsg = '',
@@ -726,10 +732,33 @@ var Filter = {
     isValid = Util.isEmptyString(errMsg) ? true : false;
 
     if (isValid) {
+      // set start width index
+      switch (horizontalPosition) {
+        case 'center':
+          startWidthIndex = Math.floor((desiredWidth - width) / 2);
+          break;
+        case 'right':
+          startWidthIndex = desiredWidth - width;
+          break;
+      }
+
+      // set start height index
+      switch (verticalPosition) {
+        case 'center':
+          startHeightIndex = Math.floor((desiredHeight - height) / 2);
+          break;
+        case 'bottom':
+          startHeightIndex = desiredHeight - height;
+          break;
+      }
+
       // copy original to result
       for (j = 0; j < height; j++) {
         for (i = 0; i < width; i++) {
-          result[i][j] = pixelPanels[i][j];
+          var widthIndex = startWidthIndex + i,
+            heightIndex = startHeightIndex + j;
+
+          result[widthIndex][heightIndex] = pixelPanels[i][j];
         }
       }
 
@@ -784,10 +813,14 @@ var Filter = {
    * 
    * @param  {PixelPanels} pixelPanels
    * @param  {PixelPanels} pixelPanels2
+   * @param  {string} horizontalPosition position left or center or right (default: left)
+   * @param  {string} verticalPosition position top or center or bottom (default: top)
    * 
    * @return {PixelPanels}
    */
-  combine: function(pixelPanels, pixelPanels2) {
+  combine: function(pixelPanels, pixelPanels2, horizontalPosition, verticalPosition) {
+    if (typeof horizontalPosition === 'undefined') horizontalPosition = 'left';
+    if (typeof verticalPosition === 'undefined') verticalPosition = 'top';
     var pixelPanelsWidth = pixelPanels.length,
       pixelPanelsHeight = pixelPanels[0].length,
       pixelPanels2Width = pixelPanels2.length,
@@ -798,8 +831,8 @@ var Filter = {
       i = 0,
       j = 0;
     
-    pixelPanels = this.resizeCanvas(pixelPanels, width, height);
-    pixelPanels2 = this.resizeCanvas(pixelPanels2, width, height);
+    pixelPanels = this.resizeCanvas(pixelPanels, width, height, horizontalPosition, verticalPosition);
+    pixelPanels2 = this.resizeCanvas(pixelPanels2, width, height, horizontalPosition, verticalPosition);
 
     for (j = 0; j < height; j++) {
       for (i = 0; i < width; i++ ) {
@@ -820,10 +853,14 @@ var Filter = {
    * 
    * @param  {PixelPanels} pixelPanels
    * @param  {PixelPanels} pixelPanels2
+   * @param  {string} horizontalPosition position left or center or right (default: left)
+   * @param  {string} verticalPosition position top or center or bottom (default: top)
    * 
    * @return {PixelPanels}
    */
-  over: function(pixelPanels, pixelPanels2) {
+  over: function(pixelPanels, pixelPanels2, horizontalPosition, verticalPosition) {
+    if (typeof horizontalPosition === 'undefined') horizontalPosition = 'left';
+    if (typeof verticalPosition === 'undefined') verticalPosition = 'top';
     var pixelPanelsWidth = pixelPanels.length,
       pixelPanelsHeight = pixelPanels[0].length,
       pixelPanels2Width = pixelPanels2.length,
@@ -835,8 +872,8 @@ var Filter = {
       j = 0;
 
     // TODO: update naming
-    var bg = this.resizeCanvas(pixelPanels, width, height),
-      obj = this.resizeCanvas(pixelPanels2, width, height);
+    var bg = this.resizeCanvas(pixelPanels, width, height, horizontalPosition, verticalPosition),
+      obj = this.resizeCanvas(pixelPanels2, width, height, horizontalPosition, verticalPosition);
 
     for (j = 0; j < height; j++) {
       for (i = 0; i < width; i++ ) {
