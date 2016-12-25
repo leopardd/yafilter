@@ -290,7 +290,7 @@ var Util = {
    * @return {string} hex code (e.g. #0033ff)
    */
   pixelToHexCode: function(pixel) {
-     return '#' + ((1 << 24) + (pixel.r << 16) + (pixel.g << 8) + pixel.b).toString(16).slice(1);
+    return '#' + ((1 << 24) + (pixel.r << 16) + (pixel.g << 8) + pixel.b).toString(16).slice(1);
   },
 
   /*---------------------------------------------------------------- App
