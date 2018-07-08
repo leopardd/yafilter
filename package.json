@@ -3,7 +3,7 @@
   "description": "Yet another image filter",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/nathaa/yafilter.git"
+    "url": "git+https://github.com/leopardd/yafilter.git"
   },
   "keywords": [
     "image",
@@ -15,9 +15,9 @@
   "author": "Nathachai Thongniran <inid3a@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/nathaa/yafilter/issues"
+    "url": "https://github.com/leopardd/yafilter/issues"
   },
-  "homepage": "https://github.com/nathaa/yafilter#readme",
+  "homepage": "https://github.com/leopardd/yafilter#readme",
   "devDependencies": {
     "browser-sync": "^2.10.1",
     "chai": "^3.5.0",
